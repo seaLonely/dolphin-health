@@ -4,6 +4,7 @@ import '../providers/app_provider.dart';
 import 'finance_screen.dart';
 import 'weight_screen.dart';
 import 'diet_screen.dart';
+import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const FinanceScreen(),
     const WeightScreen(),
     const DietScreen(),
+    const StatisticsScreen(),
   ];
 
   @override
@@ -53,6 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.restaurant_outlined),
             selectedIcon: Icon(Icons.restaurant),
             label: '饮食',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart),
+            label: '统计',
           ),
         ],
       ),

@@ -57,6 +57,13 @@ class DatabaseHelper {
         mealType TEXT
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE user_settings (
+        key TEXT PRIMARY KEY,
+        value REAL NOT NULL
+      )
+    ''');
   }
 
   // Transaction methods
@@ -98,5 +105,50 @@ class DatabaseHelper {
   Future close() async {
     final db = await database;
     db.close();
+  }
+
+  // User settings methods
+  Future<void> setUserHeight(double height) async {
+    final db = await database;
+    await db.insert(
+      'user_settings',
+      {'key': 'height', 'value': height},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<double?> getUserHeight() async {
+    final db = await database;
+    final maps = await db.query(
+      'user_settings',
+      where: 'key = ?',
+      whereArgs: ['height'],
+    );
+    if (maps.isNotEmpty) {
+      return maps.first['value'] as double;
+    }
+    return null;
+  }
+
+  Future<void> setGoalWeight(double weight) async {
+    final db = await database;
+    await db.insert(
+      'user_settings',
+      {'key': 'goal_weight', 'value': weight},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<double> getGoalWeight() async {
+    final db = await database;
+    final maps = await db.query(
+      'user_settings',
+      where: 'key = ?',
+      whereArgs: ['goal_weight'],
+    );
+    if (maps.isNotEmpty) {
+      return maps.first['value'] as double;
+    }
+    return 0;
   }
 }

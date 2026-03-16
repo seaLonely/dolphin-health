@@ -10,15 +10,21 @@ class AppProvider extends ChangeNotifier {
   List<Transaction> _transactions = [];
   List<WeightRecord> _weightRecords = [];
   List<DietRecord> _dietRecords = [];
+  double? _userHeight;
+  double _goalWeight = 0;
 
   List<Transaction> get transactions => _transactions;
   List<WeightRecord> get weightRecords => _weightRecords;
   List<DietRecord> get dietRecords => _dietRecords;
+  double? get userHeight => _userHeight;
+  double get goalWeight => _goalWeight;
 
   Future<void> loadData() async {
     _transactions = await _db.getTransactions();
     _weightRecords = await _db.getWeightRecords();
     _dietRecords = await _db.getDietRecords();
+    _userHeight = await _db.getUserHeight();
+    _goalWeight = await _db.getGoalWeight();
     notifyListeners();
   }
 
@@ -63,5 +69,17 @@ class AppProvider extends ChangeNotifier {
           d.date.month == today.month &&
           d.date.day == today.day)
         .fold(0, (sum, d) => sum + d.calories);
+  }
+
+  Future<void> setUserHeight(double height) async {
+    await _db.setUserHeight(height);
+    _userHeight = height;
+    notifyListeners();
+  }
+
+  Future<void> setGoalWeight(double weight) async {
+    await _db.setGoalWeight(weight);
+    _goalWeight = weight;
+    notifyListeners();
   }
 }
