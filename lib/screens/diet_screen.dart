@@ -250,7 +250,40 @@ class _AddDietDialogState extends State<AddDietDialog> {
           onPressed: () {
             final foodName = _foodNameController.text;
             final calories = double.tryParse(_caloriesController.text) ?? 0;
+            final protein = double.tryParse(_proteinController.text) ?? 0;
+            final carbs = double.tryParse(_carbsController.text) ?? 0;
+            final fat = double.tryParse(_fatController.text) ?? 0;
             
             if (foodName.isNotEmpty && calories > 0) {
               final record = DietRecord(
-                foodName: food
+                foodName: foodName,
+                calories: calories,
+                protein: protein,
+                carbs: carbs,
+                fat: fat,
+                date: DateTime.now(),
+                mealType: _mealType,
+              );
+              
+              Provider.of<AppProvider>(context, listen: false)
+                  .addDietRecord(record);
+              
+              Navigator.pop(context);
+            }
+          },
+          child: const Text('保存'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _foodNameController.dispose();
+    _caloriesController.dispose();
+    _proteinController.dispose();
+    _carbsController.dispose();
+    _fatController.dispose();
+    super.dispose();
+  }
+}
