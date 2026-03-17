@@ -107,6 +107,105 @@ class DatabaseHelper {
     db.close();
   }
 
+  // Delete methods
+  Future<int> deleteTransaction(int id) async {
+    final db = await database;
+    return await db.delete(
+      'transactions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> deleteWeightRecord(int id) async {
+    final db = await database;
+    return await db.delete(
+      'weight_records',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> deleteDietRecord(int id) async {
+    final db = await database;
+    return await db.delete(
+      'diet_records',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Update methods
+  Future<int> updateTransaction(Transaction transaction) async {
+    final db = await database;
+    return await db.update(
+      'transactions',
+      transaction.toMap(),
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+  }
+
+  Future<int> updateWeightRecord(WeightRecord record) async {
+    final db = await database;
+    return await db.update(
+      'weight_records',
+      record.toMap(),
+      where: 'id = ?',
+      whereArgs: [record.id],
+    );
+  }
+
+  Future<int> updateDietRecord(DietRecord record) async {
+    final db = await database;
+    return await db.update(
+      'diet_records',
+      record.toMap(),
+      where: 'id = ?',
+      whereArgs: [record.id],
+    );
+  }
+
+  // Get single record methods
+  Future<Transaction?> getTransaction(int id) async {
+    final db = await database;
+    final maps = await db.query(
+      'transactions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Transaction.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<WeightRecord?> getWeightRecord(int id) async {
+    final db = await database;
+    final maps = await db.query(
+      'weight_records',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return WeightRecord.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<DietRecord?> getDietRecord(int id) async {
+    final db = await database;
+    final maps = await db.query(
+      'diet_records',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return DietRecord.fromMap(maps.first);
+    }
+    return null;
+  }
+
   // User settings methods
   Future<void> setUserHeight(double height) async {
     final db = await database;

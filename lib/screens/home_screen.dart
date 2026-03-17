@@ -5,6 +5,7 @@ import 'finance_screen.dart';
 import 'weight_screen.dart';
 import 'diet_screen.dart';
 import 'statistics_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const WeightScreen(),
     const DietScreen(),
     const StatisticsScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -61,14 +63,33 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedIcon: Icon(Icons.bar_chart),
             label: '统计',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: '设置',
+          ),
         ],
       ),
     );
   }
 }
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 确保数据在页面加载时刷新
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AppProvider>(context, listen: false).loadData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +110,7 @@ class DashboardScreen extends StatelessWidget {
                   subtitle: '结余: ¥${provider.balance.toStringAsFixed(2)}',
                   icon: Icons.account_balance_wallet,
                   color: Colors.blue,
+                  onTap: () => _navigateToTab(context, 1),
                 ),
                 const SizedBox(height: 16),
                 _buildSummaryCard(
@@ -96,6 +118,7 @@ class DashboardScreen extends StatelessWidget {
                   subtitle: '${provider.currentWeight.toStringAsFixed(1)} kg',
                   icon: Icons.scale,
                   color: Colors.green,
+                  onTap: () => _navigateToTab(context, 2),
                 ),
                 const SizedBox(height: 16),
                 _buildSummaryCard(
@@ -103,6 +126,7 @@ class DashboardScreen extends StatelessWidget {
                   subtitle: '${provider.todayCalories.toStringAsFixed(0)} 千卡',
                   icon: Icons.restaurant,
                   color: Colors.orange,
+                  onTap: () => _navigateToTab(context, 3),
                 ),
               ],
             ),
@@ -112,51 +136,67 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
+  void _navigateToTab(BuildContext context, int tabIndex) {
+    // 通过 HomeScreen 的 state 来切换 tab
+    final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+    if (homeState != null) {
+      homeState.setState(() {
+        homeState._currentIndex = tabIndex;
+      });
+    }
+  }
+
   Widget _buildSummaryCard({
     required String title,
     required String subtitle,
     required IconData icon,
     required Color color,
+    VoidCallback? onTap,
   }) {
     return Card(
       elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 32),
               ),
-              child: Icon(icon, color: color, size: 32),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: color,
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

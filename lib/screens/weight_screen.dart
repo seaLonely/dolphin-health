@@ -96,20 +96,37 @@ class _WeightScreenState extends State<WeightScreen> {
   }
 
   Widget _buildWeightItem(WeightRecord record, int index) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.scale, color: Colors.white),
+    return Dismissible(
+      key: Key('weight_${record.id}'),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
-      title: Text('${record.weight.toStringAsFixed(1)} kg'),
-      subtitle: Text(record.date.toString().split(' ')[0]),
-      trailing: index == 0 
-          ? const Chip(
-              label: Text('最新'),
-              backgroundColor: Colors.blue,
-              labelStyle: TextStyle(color: Colors.white),
-            )
-          : null,
+      onDismissed: (_) {
+        Provider.of<AppProvider>(context, listen: false)
+            .deleteWeightRecord(record.id!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('记录已删除')),
+        );
+      },
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.scale, color: Colors.white),
+        ),
+        title: Text('${record.weight.toStringAsFixed(1)} kg'),
+        subtitle: Text(record.date.toString().split(' ')[0]),
+        trailing: index == 0 
+            ? const Chip(
+                label: Text('最新'),
+                backgroundColor: Colors.blue,
+                labelStyle: TextStyle(color: Colors.white),
+              )
+            : null,
+      ),
     );
   }
 

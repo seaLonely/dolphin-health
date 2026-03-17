@@ -105,33 +105,50 @@ class _DietScreenState extends State<DietScreen> {
       '加餐': Icons.cookie,
     };
     
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.orange,
-        child: Icon(
-          mealTypeIcons[record.mealType] ?? Icons.restaurant,
-          color: Colors.white,
-        ),
+    return Dismissible(
+      key: Key('diet_${record.id}'),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
-      title: Text(record.foodName),
-      subtitle: Text('${record.mealType ?? '其他'} · ${record.calories.toStringAsFixed(0)} 千卡'),
-      trailing: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            '蛋白质: ${record.protein.toStringAsFixed(1)}g',
-            style: const TextStyle(fontSize: 12),
+      onDismissed: (_) {
+        Provider.of<AppProvider>(context, listen: false)
+            .deleteDietRecord(record.id!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('记录已删除')),
+        );
+      },
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.orange,
+          child: Icon(
+            mealTypeIcons[record.mealType] ?? Icons.restaurant,
+            color: Colors.white,
           ),
-          Text(
-            '碳水: ${record.carbs.toStringAsFixed(1)}g',
-            style: const TextStyle(fontSize: 12),
-          ),
-          Text(
-            '脂肪: ${record.fat.toStringAsFixed(1)}g',
-            style: const TextStyle(fontSize: 12),
-          ),
-        ],
+        ),
+        title: Text(record.foodName),
+        subtitle: Text('${record.mealType ?? '其他'} · ${record.calories.toStringAsFixed(0)} 千卡'),
+        trailing: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              '蛋白质: ${record.protein.toStringAsFixed(1)}g',
+              style: const TextStyle(fontSize: 12),
+            ),
+            Text(
+              '碳水: ${record.carbs.toStringAsFixed(1)}g',
+              style: const TextStyle(fontSize: 12),
+            ),
+            Text(
+              '脂肪: ${record.fat.toStringAsFixed(1)}g',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -86,22 +86,39 @@ class _FinanceScreenState extends State<FinanceScreen> {
 
   Widget _buildTransactionItem(Transaction transaction) {
     final isIncome = transaction.type == 'income';
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: isIncome ? Colors.green : Colors.red,
-        child: Icon(
-          isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-          color: Colors.white,
-        ),
+    return Dismissible(
+      key: Key('transaction_${transaction.id}'),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
-      title: Text(transaction.title),
-      subtitle: Text('${transaction.category} · ${transaction.date.toString().split(' ')[0]}'),
-      trailing: Text(
-        '${isIncome ? '+' : '-'}¥${transaction.amount.toStringAsFixed(2)}',
-        style: TextStyle(
-          color: isIncome ? Colors.green : Colors.red,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
+      onDismissed: (_) {
+        Provider.of<AppProvider>(context, listen: false)
+            .deleteTransaction(transaction.id!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('记录已删除')),
+        );
+      },
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: isIncome ? Colors.green : Colors.red,
+          child: Icon(
+            isIncome ? Icons.arrow_downward : Icons.arrow_upward,
+            color: Colors.white,
+          ),
+        ),
+        title: Text(transaction.title),
+        subtitle: Text('${transaction.category} · ${transaction.date.toString().split(' ')[0]}'),
+        trailing: Text(
+          '${isIncome ? '+' : '-'}¥${transaction.amount.toStringAsFixed(2)}',
+          style: TextStyle(
+            color: isIncome ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
       ),
     );

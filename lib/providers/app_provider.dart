@@ -43,6 +43,38 @@ class AppProvider extends ChangeNotifier {
     await loadData();
   }
 
+  // Delete methods
+  Future<void> deleteTransaction(int id) async {
+    await _db.deleteTransaction(id);
+    await loadData();
+  }
+
+  Future<void> deleteWeightRecord(int id) async {
+    await _db.deleteWeightRecord(id);
+    await loadData();
+  }
+
+  Future<void> deleteDietRecord(int id) async {
+    await _db.deleteDietRecord(id);
+    await loadData();
+  }
+
+  // Update methods
+  Future<void> updateTransaction(Transaction transaction) async {
+    await _db.updateTransaction(transaction);
+    await loadData();
+  }
+
+  Future<void> updateWeightRecord(WeightRecord record) async {
+    await _db.updateWeightRecord(record);
+    await loadData();
+  }
+
+  Future<void> updateDietRecord(DietRecord record) async {
+    await _db.updateDietRecord(record);
+    await loadData();
+  }
+
   double get totalIncome {
     return _transactions
         .where((t) => t.type == 'income')
